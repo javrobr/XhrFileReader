@@ -1,26 +1,26 @@
-cordova.define("cordova/plugin/assetfilereader",
+cordova.define("cordova/plugin/xhrfilereader",
   function(require, exports, module) {
     ProgressEvent = require('cordova/plugin/ProgressEvent');
     FileError = require('cordova/plugin/FileError'),
 
-    var AssetFileReader = function () {
+    var XhrFileReader = function () {
         this.readyState = 0;
         this.error = null;
         this.result = null;
     };
 
-    AssetFileReader.EMPTY = 0;
-    AssetFileReader.LOADING = 1;
-    AssetFileReader.DONE = 2;
+    XhrFileReader.EMPTY = 0;
+    XhrFileReader.LOADING = 1;
+    XhrFileReader.DONE = 2;
 
-    AssetFileReader.prototype.abort = function() {
+    XhrFileReader.prototype.abort = function() {
         this.result = null;
     
-        if (this.readyState == FileReader.DONE || this.readyState == FileReader.EMPTY) {
+        if (this.readyState == XhrFileReader.DONE || this.readyState == FileReader.EMPTY) {
           return;
         }
     
-        this.readyState = FileReader.DONE;
+        this.readyState = XhrFileReader.DONE;
     
         // If abort callback
         if (typeof this.onabort === 'function') {
@@ -32,19 +32,19 @@ cordova.define("cordova/plugin/assetfilereader",
         }
     };
 
-    AssetFileReader.prototype.readAsArrayBuffer = function(file) {
+    XhrFileReader.prototype.readAsArrayBuffer = function(file) {
         console.log('method "readAsArrayBuffer" is not supported at this time.');
         this.abort();
     };
 
-    AssetFileReader.prototype.readAsText = function(file, encoding) {
+    XhrFileReader.prototype.readAsText = function(file, encoding) {
         // Default encoding is UTF-8
         var enc = encoding ? encoding : "UTF-8";
         var me = this;
 
         var request = new XMLHttpRequest();
         request.open("GET", file, true);
-        request.onreadystatechange = function() {//Call a function when the state changes.
+        request.onreadystatechange = function() {
             if (request.readyState == 3) {
                 // If onprogress callback
                 if (typeof me.onprogress === "function") {
@@ -56,7 +56,7 @@ cordova.define("cordova/plugin/assetfilereader",
             } else if (request.readyState == 4) {
                 if (request.status == 200 || request.status == 0) {
                     // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
+                    if (me.readyState === XhrFileReader.DONE) {
                         return;
                     }
         
@@ -69,7 +69,7 @@ cordova.define("cordova/plugin/assetfilereader",
                     }
         
                     // DONE state
-                    me.readyState = FileReader.DONE;
+                    me.readyState = XhrFileReader.DONE;
         
                     // If onloadend callback
                     if (typeof me.onloadend === "function") {
@@ -77,12 +77,12 @@ cordova.define("cordova/plugin/assetfilereader",
                     }
                 } else {
                     // If DONE (cancelled), then don't do anything
-                    if (me.readyState === FileReader.DONE) {
+                    if (me.readyState === XhrFileReader.DONE) {
                         return;
                     }
         
                     // DONE state
-                    me.readyState = FileReader.DONE;
+                    me.readyState = XhrFileReader.DONE;
         
                     // null result
                     me.result = null;
@@ -109,11 +109,11 @@ cordova.define("cordova/plugin/assetfilereader",
         request.send();
     };
 
-    AssetFileReader.prototype.readAsDataURL = function(file) {
+    XhrFileReader.prototype.readAsDataURL = function(file) {
         console.log('method "readAsDataURL" is not supported at this time.');
         this.abort();
     };
 
-    var fileReader = new AssetFileReader();
+    var fileReader = new XhrFileReader();
     module.exports = fileReader;
 });
